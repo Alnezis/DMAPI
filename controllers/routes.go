@@ -5,6 +5,7 @@ import (
 	"DMAPI/controllers/deals"
 	"DMAPI/controllers/documents"
 	"DMAPI/controllers/files"
+	"DMAPI/controllers/messages"
 	"DMAPI/controllers/photos"
 )
 
@@ -22,6 +23,9 @@ func (server *Server) initializeRoutes() {
 	server.Router.GET("/deals/get", deals.GetDeal)
 
 	server.Router.POST("/photos/attach", photos.AddPhoto)
+
+	server.Router.POST("/messages/send", messages.Send)
+	server.Router.GET("/messages/list", messages.MessagesList)
 
 	//server.Router.Any("/getCroppedPlan", getCroppedPlan)
 

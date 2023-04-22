@@ -41,6 +41,14 @@ func Auth(l, p string) *User {
 	return &user
 }
 
+func GetUser(userID int64) (user User) {
+	err := app.DB.Get(&user, `select * from users where id=$1`, userID)
+	if err != nil {
+		logger.Error.Println(err)
+	}
+	return
+}
+
 func ExistUser(userID int64) (exist bool) {
 	err := app.DB.Get(&exist, `select exists(select * from users where id=$1)`, userID)
 	if err != nil {
