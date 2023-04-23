@@ -3,7 +3,6 @@ package deals
 import (
 	"DMAPI/controllers/api"
 	"DMAPI/models"
-	"fmt"
 	"github.com/CossackPyra/pyraconv"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
@@ -52,9 +51,10 @@ func CreateDeal(c *gin.Context) {
 
 	ds := models.DealStatus{
 		DealID: dealID,
-		Status: "send",
+		Status: "pending",
+		UserID: userID,
 	}
-
+	spew.Dump(ds)
 	ds.Create()
 
 	doc := models.Document{
@@ -66,15 +66,17 @@ func CreateDeal(c *gin.Context) {
 	}
 
 	docID := doc.CreateDocument()
-	spew.Dump(doc)
-	fmt.Println(docID)
+	//spew.Dump(doc)
+	//fmt.Println(docID)
 	docStatus := models.DocumentStatuses{
 		DocumentID: docID,
-		Status:     "send",
+		Status:     "on_review",
+		UserID:     userID,
 	}
 
 	docStatus.Create()
 
-	c.JSON(http.StatusOK, api.Response{Result: models.GetDeal(dealID)})
+	d, _ := models.GetDeal(dealID)
+	c.JSON(http.StatusOK, api.Response{Result: d})
 
 }

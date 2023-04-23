@@ -39,6 +39,14 @@ VALUES (:deal_id, :user_id, :to_user_id, :url, :name) returning id;`)
 	return
 }
 
+func ExistDoc(docID int64) (exist bool) {
+	err := app.DB.Get(&exist, `select exists(select * from documents where id=$1)`, docID)
+	if err != nil {
+		logger.Error.Println(err)
+	}
+	return
+}
+
 func GetDocuments(dealID int64) (ci []Document) {
 	var r Document
 

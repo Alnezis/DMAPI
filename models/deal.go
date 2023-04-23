@@ -42,7 +42,8 @@ func (d *Deal) CreateDeal() (i int64) {
 func GetDeals(userID int64) (ci []Deal) {
 	var r Deal
 
-	rows, err := app.DB.Queryx(`select id,to_user_id,time_created from deals where user_id=$1 order by time_created desc`, userID)
+	rows, err := app.DB.Queryx(`select id,to_user_id,time_created,name from deals
+                                       where user_id=$1 order by time_created desc`, userID)
 	if err != nil {
 		logger.Error.Println(err)
 	} else {
@@ -66,7 +67,7 @@ func GetDeals(userID int64) (ci []Deal) {
 
 }
 
-func ExistDEal(dealID int64) (exist bool) {
+func ExistDeal(dealID int64) (exist bool) {
 	err := app.DB.Get(&exist, `select exists(select * from deals where id=$1)`, dealID)
 	if err != nil {
 		logger.Error.Println(err)
@@ -74,8 +75,13 @@ func ExistDEal(dealID int64) (exist bool) {
 	return
 }
 
-func GetDeal(dealID int64) (ci Deal) {
+func GetDeal(dealID int64) (ci Deal, exist bool) {
 
+	exist = ExistDeal(dealID)
+
+	if !exist {
+		return
+	}
 	err := app.DB.Get(&ci, `select * from deals where id=$1 order by time_created desc`, dealID)
 	if err != nil {
 		logger.Error.Println(err)
@@ -85,6 +91,14 @@ func GetDeal(dealID int64) (ci Deal) {
 	ci.Documents = GetDocuments(ci.ID)
 	ci.Photos = GetPhotosDeal(ci.ID)
 
-	return ci
+	return
 
+}
+
+func (d Deal) SetStatus(userID int64, i bool) {
+	_, err := app.DB.Exec(`update deals set =? where dialog_id=?;`,
+		i, userID)
+	if err != nil {
+		logger.Error.Println("SetArchive", err)
+	}
 }

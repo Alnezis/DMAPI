@@ -10,10 +10,11 @@ type Photo struct {
 	ID      int64  `json:"id,omitempty" db:"id,omitempty"`
 	DealID  int64  `json:"deal_id,omitempty" db:"deal_id,omitempty"`
 	UserID  int64  `json:"user_id,omitempty" db:"user_id,omitempty"`
-	Url     string `json:"url,omitempty" db:"url,omitempty"`
-	Caption string `json:"caption,omitempty" db:"caption,omitempty"`
+	Url     string `json:"url" db:"url,omitempty"`
+	Caption string `json:"caption" db:"caption,omitempty"`
 
 	TimeCreated time.Time `json:"time_created,omitempty" db:"time_created,omitempty"`
+	Name        string    `json:"name,omitempty" db:"name,omitempty"`
 }
 
 func (m *Photo) TableName() string {
@@ -21,7 +22,9 @@ func (m *Photo) TableName() string {
 }
 
 func GetPhotosDeal(dealID int64) (s []Photo) {
-	err := app.DB.Select(&s, `select id,user_id,time_created,caption from photos where deal_id=$1 order by time_created desc`, dealID)
+	err := app.DB.Select(&s, `select p.id,p.user_id,p.time_created,caption,url,u.name from photos p 
+                                           join users u on u.id = p.user_id
+                                           where deal_id=$1 order by time_created desc`, dealID)
 	if err != nil {
 		logger.Error.Println(err)
 	}
