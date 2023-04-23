@@ -7,6 +7,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 type _cd struct {
@@ -40,6 +41,14 @@ func CreateDeal(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, api.ResponseError("contractor_id не существует или не имеет роль contractor", 4))
 		return
 	}
+	if req.DocURL == "" {
+		c.JSON(http.StatusBadRequest, api.ResponseError("doc_url не существует", 4))
+		return
+	}
+
+	if req.DealName == "" {
+		req.DealName = "наименование сделки"
+	}
 
 	deal := models.Deal{
 		UserID:   userID,
@@ -56,6 +65,11 @@ func CreateDeal(c *gin.Context) {
 	}
 	spew.Dump(ds)
 	ds.Create()
+
+	if req.DocName == "" {
+		l := strings.Split(req.DocURL, "/")
+		req.DocName = l[len(l)-1]
+	}
 
 	doc := models.Document{
 		DealID:   dealID,

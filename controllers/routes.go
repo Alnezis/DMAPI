@@ -8,6 +8,7 @@ import (
 	"DMAPI/controllers/messages"
 	"DMAPI/controllers/photos"
 	"DMAPI/controllers/static"
+	gs "github.com/gin-contrib/static"
 )
 
 func (server *Server) initializeRoutes() {
@@ -34,4 +35,8 @@ func (server *Server) initializeRoutes() {
 	server.Router.GET("/messages/list", messages.MessagesList)
 
 	server.Router.GET("/static/statuses", static.GetStatuses)
+
+	server.Router.Use(gs.Serve("/", gs.LocalFile("/var/www/html", false)))
+
+	///var/www/html
 }
