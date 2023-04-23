@@ -19,12 +19,12 @@ func GetDeal(c *gin.Context) {
 		return
 	}
 
-	if !models.ExistDEal(req.DealID) {
+	if !models.ExistDeal(req.DealID) {
 		c.JSON(http.StatusBadRequest, api.ResponseError("deal_id не существует", 4))
 		return
 	}
 
-	d := models.GetDeal(req.DealID)
+	d, _ := models.GetDeal(req.DealID)
 	c.JSON(http.StatusOK, api.Response{Result: d})
 
 }

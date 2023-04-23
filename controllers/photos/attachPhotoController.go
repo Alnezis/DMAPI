@@ -34,7 +34,7 @@ func AddPhoto(c *gin.Context) {
 		return
 	}
 
-	if !models.ExistDEal(req.DealID) {
+	if !models.ExistDeal(req.DealID) {
 		c.JSON(http.StatusBadRequest, api.ResponseError("deal_id не существует", 4))
 		return
 	}
